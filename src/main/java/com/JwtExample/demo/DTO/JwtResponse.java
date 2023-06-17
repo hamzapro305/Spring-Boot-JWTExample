@@ -1,4 +1,4 @@
-package com.JwtExample.demo.model;
+package com.JwtExample.demo.DTO;
 
 import lombok.*;
 

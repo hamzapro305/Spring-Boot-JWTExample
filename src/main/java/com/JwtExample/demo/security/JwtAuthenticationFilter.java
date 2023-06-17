@@ -1,5 +1,6 @@
 package com.JwtExample.demo.security;
 
+import com.JwtExample.demo.services.jwt.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
@@ -19,12 +20,12 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private UserDetailsService userDetailsService;
-    private JwtHelper jwtHelper;
+    private final UserDetailsService userDetailsService;
+    private final JwtService jwtService;
 
-    public JwtAuthenticationFilter(UserDetailsService userDetailsService, JwtHelper jwtHelper) {
+    public JwtAuthenticationFilter(UserDetailsService userDetailsService, JwtService jwtService) {
         this.userDetailsService = userDetailsService;
-        this.jwtHelper = jwtHelper;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -38,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             //looking good
             token = requestHeader.substring(7);
             try {
-                username = this.jwtHelper.getUsernameFromToken(token);
+                username = this.jwtService.getUsernameFromToken(token);
 
             } catch (IllegalArgumentException e) {
                 logger.info("Illegal Argument while fetching the username !!");
@@ -60,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             //fetch user detail from username
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            Boolean validateToken = this.jwtHelper.validateToken(token, userDetails);
+            Boolean validateToken = this.jwtService.validateToken(token, userDetails);
             if (validateToken) {
                 //set the authentication
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
