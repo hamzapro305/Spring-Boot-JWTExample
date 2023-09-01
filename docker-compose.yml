@@ -5,3 +5,13 @@ services:
     build: ./Backend
     ports:
       - 8080:8080
+
+  database:
+    image: "mongo:4.0.27-xenial"
+    restart: always
+    expose:
+      - 27017
+    volumes:
+      - ./mongo-data:/data/db
+    ports:
+      - 27017:27017

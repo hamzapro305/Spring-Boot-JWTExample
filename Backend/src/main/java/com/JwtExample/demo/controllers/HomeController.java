@@ -22,7 +22,7 @@ public class HomeController {
     public UserDTO Home(@RequestHeader("Authorization") String authorizationHeader){
         String token = authorizationHeader.substring(7);
         String userName = jwtService.getUsernameFromToken(token);
-        User usr = this.userRepository.getUserByName(userName);
+        User usr = this.userRepository.findByUserName(userName);
         return modelMapper.map(usr, UserDTO.class);
 
     }
